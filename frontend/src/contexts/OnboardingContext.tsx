@@ -333,6 +333,15 @@ export function OnboardingProvider({ children }: { children: React.ReactNode }) 
   };
 
   const loadOnboardingStatus = async () => {
+    // Check if running in standard web browser (Netlify) instead of Tauri desktop container
+    if (typeof window !== 'undefined' && !('__TAURI_INTERNALS__' in window)) {
+      console.log('[OnboardingContext] Web environment detected (Netlify) - bypassing desktop local model check');
+      setCompleted(true);
+      setParakeetDownloaded(true);
+      setSummaryModelDownloaded(true);
+      return;
+    }
+
     try {
       const status = await invoke<OnboardingStatus | null>('get_onboarding_status');
       if (status) {
@@ -462,6 +471,17 @@ export function OnboardingProvider({ children }: { children: React.ReactNode }) 
   };
 
   const completeOnboarding = async () => {
+    if (typeof window !== 'undefined' && !('__TAURI_INTERNALS__' in window)) {
+      console.log('[OnboardingContext] Web environment detected - completing onboarding in web browser mode');
+      setCompleted(true);
+      setParakeetDownloaded(true);
+      setSummaryModelDownloaded(true);
+      if (typeof localStorage !== 'undefined') {
+        localStorage.setItem('meetily_onboarding_completed', 'true');
+      }
+      return;
+    }
+
     try {
       // Set completion flag to prevent race conditions with auto-save
       isCompletingRef.current = true;

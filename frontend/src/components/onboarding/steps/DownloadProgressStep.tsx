@@ -166,6 +166,28 @@ export function DownloadProgressStep() {
 
   // Start the required transcription model immediately; summary readiness must not block it.
   useEffect(() => {
+    // Check if running in web browser (Netlify) without Tauri native container
+    if (typeof window !== 'undefined' && !('__TAURI_INTERNALS__' in window)) {
+      setParakeetState({
+        status: 'completed',
+        progress: 100,
+        downloadedMb: 670,
+        totalMb: 670,
+        speedMbps: 0,
+      });
+      setSummaryState({
+        status: 'completed',
+        progress: 100,
+        downloadedMb: 100,
+        totalMb: 100,
+        speedMbps: 0,
+      });
+      setParakeetDownloaded(true);
+      setSummaryModelDownloaded(true);
+      completeOnboarding().catch(() => {});
+      return;
+    }
+
     if (parakeetDownloadStartedRef.current) return;
     parakeetDownloadStartedRef.current = true;
 
