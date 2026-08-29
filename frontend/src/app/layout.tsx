@@ -77,7 +77,15 @@ export default function RootLayout({
   const [importFilePath, setImportFilePath] = useState<string | null>(null)
 
   useEffect(() => {
-    // Check onboarding status first
+    // Check if running in standard web browser (Netlify) without Tauri desktop container
+    if (typeof window !== 'undefined' && !('__TAURI_INTERNALS__' in window)) {
+      console.log('[Layout] Web environment detected (Netlify) - bypassing desktop onboarding');
+      setShowOnboarding(false);
+      setOnboardingCompleted(true);
+      return;
+    }
+
+    // Check onboarding status for desktop app
     invoke<{ completed: boolean } | null>('get_onboarding_status')
       .then((status) => {
         const isComplete = status?.completed ?? false
