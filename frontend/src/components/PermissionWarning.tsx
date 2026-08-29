@@ -19,6 +19,11 @@ export function PermissionWarning({
 }: PermissionWarningProps) {
   const isLinux = useIsLinux();
 
+  // Don't show in web browser mode (Netlify)
+  if (typeof window !== 'undefined' && !('__TAURI_INTERNALS__' in window)) {
+    return null;
+  }
+
   // Don't show on Linux - permission handling is not needed
   if (isLinux) {
     return null;

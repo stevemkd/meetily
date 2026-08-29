@@ -19,6 +19,18 @@ export function usePermissionCheck() {
   const checkPermissions = async () => {
     setStatus(prev => ({ ...prev, isChecking: true, error: null }));
 
+    // Web browser environment check (Netlify)
+    if (typeof window !== 'undefined' && !('__TAURI_INTERNALS__' in window)) {
+      console.log('[usePermissionCheck] Web browser environment detected - enabling web permissions');
+      setStatus({
+        hasMicrophone: true,
+        hasSystemAudio: true,
+        isChecking: false,
+        error: null,
+      });
+      return { hasMicrophone: true, hasSystemAudio: true };
+    }
+
     try {
       // Get audio devices to check for microphone and system audio availability
       const devices = await invoke<Array<{ name: string; device_type: 'Input' | 'Output' }>>('get_audio_devices');
