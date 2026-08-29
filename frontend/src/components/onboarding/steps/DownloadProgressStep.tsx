@@ -386,6 +386,19 @@ export function DownloadProgressStep() {
       });
     }
 
+    if (typeof window !== 'undefined' && !('__TAURI_INTERNALS__' in window)) {
+      setIsCompleting(true);
+      try {
+        localStorage.setItem('meetily_onboarding_completed', 'true');
+        await completeOnboarding();
+      } catch (e) {
+        console.warn('Web onboarding complete fallback:', e);
+      } finally {
+        window.location.href = '/';
+      }
+      return;
+    }
+
     if (isMac) {
       // macOS: Go to Permissions step (will complete after permissions granted)
       goNext();
