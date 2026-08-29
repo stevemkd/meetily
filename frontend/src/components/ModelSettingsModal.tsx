@@ -17,7 +17,7 @@ import {
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Switch } from '@/components/ui/switch';
-import { Lock, Unlock, Eye, EyeOff, RefreshCw, CheckCircle2, XCircle, ChevronDown, ChevronUp, Download, ExternalLink, Check, ChevronsUpDown } from 'lucide-react';
+import { Lock, Unlock, Eye, EyeOff, RefreshCw, CheckCircle2, XCircle, ChevronDown, ChevronUp, Download, ExternalLink, Check, ChevronsUpDown, Sparkles } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import {
   Command,
@@ -1370,6 +1370,79 @@ export function ModelSettingsModal({
             />
           </div>
         )}
+
+        {/* OpenControl Advanced Parameter Controls */}
+        <div className="mt-6 border-t pt-4">
+          <button
+            type="button"
+            onClick={() => setIsCustomOpenAIAdvancedOpen(!isCustomOpenAIAdvancedOpen)}
+            className="flex items-center justify-between w-full text-sm font-semibold text-gray-800 hover:text-indigo-600 transition-colors py-1"
+          >
+            <span className="flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-indigo-600" />
+              Advanced Generation Parameters (Temperature, Max Tokens, Top-P)
+            </span>
+            {isCustomOpenAIAdvancedOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+          </button>
+
+          {isCustomOpenAIAdvancedOpen && (
+            <div className="mt-3 p-4 bg-gray-50 rounded-lg border border-gray-200 space-y-4 text-xs">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <Label className="text-xs font-medium text-gray-700">Temperature (0.0 - 1.0)</Label>
+                  <Input
+                    type="number"
+                    step="0.1"
+                    min="0"
+                    max="1"
+                    value={customTemperature}
+                    onChange={(e) => {
+                      setCustomTemperature(e.target.value);
+                      setModelConfig((prev) => ({ ...prev, temperature: parseFloat(e.target.value) || 0.7 }));
+                    }}
+                    placeholder="0.7 (Default)"
+                    className="mt-1 bg-white"
+                  />
+                  <span className="text-[10px] text-gray-400">Lower = focused & precise, Higher = creative</span>
+                </div>
+
+                <div>
+                  <Label className="text-xs font-medium text-gray-700">Max Tokens</Label>
+                  <Input
+                    type="number"
+                    step="128"
+                    value={customMaxTokens}
+                    onChange={(e) => {
+                      setCustomMaxTokens(e.target.value);
+                      setModelConfig((prev) => ({ ...prev, maxTokens: parseInt(e.target.value) || 4096 }));
+                    }}
+                    placeholder="4096"
+                    className="mt-1 bg-white"
+                  />
+                  <span className="text-[10px] text-gray-400">Maximum summary output token limit</span>
+                </div>
+
+                <div>
+                  <Label className="text-xs font-medium text-gray-700">Top-P Sampling</Label>
+                  <Input
+                    type="number"
+                    step="0.05"
+                    min="0"
+                    max="1"
+                    value={customTopP}
+                    onChange={(e) => {
+                      setCustomTopP(e.target.value);
+                      setModelConfig((prev) => ({ ...prev, topP: parseFloat(e.target.value) || 0.9 }));
+                    }}
+                    placeholder="0.9"
+                    className="mt-1 bg-white"
+                  />
+                  <span className="text-[10px] text-gray-400">Nucleus sampling probability threshold</span>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Auto-generate summaries toggle */}
