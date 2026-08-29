@@ -4,6 +4,7 @@
 
 [build.environment]
   NODE_VERSION = "20"
+  NETLIFY_USE_PNPM = "false"
 
 [[redirects]]
   from = "/*"
