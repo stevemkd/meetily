@@ -284,6 +284,10 @@ export function TranscriptProvider({ children }: { children: ReactNode }) {
 
     const setupListener = async () => {
       try {
+        if (typeof window !== 'undefined' && !('__TAURI_INTERNALS__' in window)) {
+          console.log('[TranscriptContext] Web environment detected (Netlify) - skipping desktop Tauri IPC transcript listener');
+          return;
+        }
         console.log('🔥 Setting up MAIN transcript listener during component initialization...');
         unlistenFn = await transcriptService.onTranscriptUpdate((update) => {
           const now = Date.now();
@@ -338,7 +342,9 @@ export function TranscriptProvider({ children }: { children: ReactNode }) {
         console.log('✅ MAIN transcript listener setup complete');
       } catch (error) {
         console.error('❌ Failed to setup MAIN transcript listener:', error);
-        alert('Failed to setup transcript listener. Check console for details.');
+        if (typeof window !== 'undefined' && '__TAURI_INTERNALS__' in window) {
+          alert('Failed to setup transcript listener. Check console for details.');
+        }
       }
     };
 
