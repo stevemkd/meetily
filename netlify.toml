@@ -5,7 +5,7 @@
 
 [build.environment]
   NODE_VERSION = "20"
-  NETLIFY_USE_PNPM = "false"
+  PNPM_FLAGS = "--no-frozen-lockfile"
 
 [[redirects]]
   from = "/*"
